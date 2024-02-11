@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const plantSchema = new mongoose.Schema({
   suhu: {
     type: Number,
-    required: true,
+    required: false,
   },
   kelembapan: {
     type: Number,
-    required: true,
+    required: false,
   },
   kelembapanTanah: {
     type: Number,
-    required: true,
+    required: false,
   },
   keterangan: {
     type: String,
@@ -21,15 +21,15 @@ const plantSchema = new mongoose.Schema({
 const sensorDataSchema = new mongoose.Schema({
   plant1: {
     type: plantSchema,
-    required: true,
+    required: false,
   },
   plant2: {
     type: plantSchema,
-    required: true,
+    required: false,
   },
   plant3: {
     type: plantSchema,
-    required: true,
+    required: false,
   },
   waktu: {
     type: Date,
