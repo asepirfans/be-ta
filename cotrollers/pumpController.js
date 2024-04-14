@@ -27,11 +27,12 @@ const getPump = async (req, res) => {
       if (!dataPump) {
         return res.status(404).json({ message: 'Data tidak ditemukan' });
       }
+      const { pump1, pump2, pump3 } = dataPump[0];
       res.status(200).json(
         {
           success: true,
           statusCode: res.statusCode,
-          data: dataPump,
+          data: { pump1, pump2, pump3 }
         }
         );
     } catch (error) {
