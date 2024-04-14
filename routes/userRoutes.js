@@ -7,18 +7,12 @@ const imageController = require('../cotrollers/imageController');
 const verifyToken = require('../middleware/verifyToken');
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/');
-    },
     filename: function (req, file, cb) {
       cb(null, file.originalname);
     }
   });
   const upload = multer({ 
     storage: storage,
-    limits: {
-      fileSize: 10 * 1024 * 1024  // Batas ukuran file, contoh: 5MB
-    }
   });
 
 router.post('/register', userController.register);

@@ -1,39 +1,70 @@
 const Image = require('../models/imageModel');
+const cloudinary = require('../utils/cloudinary')
 const fs = require('fs');
 
 const uploadImage = async (req, res) => {
-      try {
-        // Baca gambar yang diupload
-        const imageBuffer = fs.readFileSync(req.file.path);
-        const contentType = req.file.mimetype;
-    
-        // Simpan hasil deteksi ke MongoDB
-        const newDetection = new Image({
-          image: imageBuffer,
-          contentType: contentType,
-          label: req.body.label,
-          treatment: req.body.treatment,
-          waktu: Date.now(),
-          user: req.username.userId,
-        });
+  const {label, treatment} = req.body;
+  const {userId} = req.username;
+ try {
+  const result  = await cloudinary.uploader.upload(req.file.path);
 
-        await newDetection.save();
-    
-        // Hapus file yang diupload dari sistem file
-        fs.unlinkSync(req.file.path);
-        res.status(200).json(
-            {
-              success: true,
-              statusCode: res.statusCode,
-              message:"Hasil deteksi berhasil disimpan.",
-              newDetection
-            }
-            );
-      } catch (error) {
-        console.error(error);
-        res.status(500).send('Terjadi kesalahan saat menyimpan hasil deteksi.');
-      }
+  const newDetection = new Image({
+    imageUrl: result.secure_url,
+    label: label,
+    treatment: treatment,
+    user: userId
+  })
+
+  const saveDetection = await newDetection.save();
+  res.status(200).json({
+    success: true,
+    message: "Uploaded!",
+    data: saveDetection
+  });
+ } catch (err) {
+  console.error(err);
+  res.status(500).json({
+    success: false,
+    message: "Error uploading image"
+  });
 }
+}
+
+
+
+// const uploadImage = async (req, res) => {
+//       try {
+//         // Baca gambar yang diupload
+//         const imageBuffer = fs.readFileSync(req.file.path);
+//         const contentType = req.file.mimetype;
+    
+//         // Simpan hasil deteksi ke MongoDB
+//         const newDetection = new Image({
+//           image: imageBuffer,
+//           contentType: contentType,
+//           label: req.body.label,
+//           treatment: req.body.treatment,
+//           waktu: Date.now(),
+//           user: req.username.userId,
+//         });
+
+//         await newDetection.save();
+    
+//         // Hapus file yang diupload dari sistem file
+//         fs.unlinkSync(req.file.path);
+//         res.status(200).json(
+//             {
+//               success: true,
+//               statusCode: res.statusCode,
+//               message:"Hasil deteksi berhasil disimpan.",
+//               newDetection
+//             }
+//             );
+//       } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Terjadi kesalahan saat menyimpan hasil deteksi.');
+//       }
+// }
 
 const getImage = async (req, res) => {
     try {

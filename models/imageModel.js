@@ -3,9 +3,10 @@ const Schema = mongoose.Schema;
 
 const imageSchema = new mongoose.Schema({
     // data: Buffer,
-    contentType: String,
-    image: Buffer, // Path atau URL gambar
-    label: String, // Label hasil deteksi
+    // contentType: String,
+    // image: Buffer, 
+    imageUrl: String, 
+    label: String, 
     treatment: String,
     waktu: {
         type: Date,
