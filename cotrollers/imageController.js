@@ -30,6 +30,93 @@ const uploadImage = async (req, res) => {
 }
 }
 
+const getImage = async (req, res) => {
+  const {id} = req.params
+  const {userId} = req.username
+  try {   
+      const image = await Image.findOne({
+        _id: id,
+        user: userId
+      }).populate('user', 'username email');
+  
+      if (image) {
+          res.status(200).json({
+            success: true,
+            statusCode: res.statusCode,
+            waktu:image.waktu,
+            label: image.label,
+            treatment: image.treatment,
+            imageUrl: image.imageUrl,
+            user: image.user
+          });
+        } else {
+          res.status(404).json({ 
+            success: false, 
+            message: 'Gambar tidak ditemukan' 
+          });
+        }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Terjadi kesalahan saat mengambil gambar');
+    }
+}
+
+const getAllImages = async (req, res) => {
+  try {
+      // Ambil semua data gambar dari MongoDB
+      const userId = req.username.userId;
+      const images = await Image.find({ user: userId }).populate('user', 'username email');
+      
+      if (images.length > 0) {
+          res.status(200).json({
+            success: true,
+            statusCode: res.statusCode,
+            data: images.map(image => ({
+              waktu: image.waktu,
+              id: image._id,
+              label: image.label,
+              treatment: image.treatment,
+              imageUrl: image.imageUrl,
+              user: image.user
+            }))
+          });
+        } else {
+          res.status(404).json({ 
+            success: false, 
+            message: 'Data gambar tidak ditemukan' 
+          });
+        }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Terjadi kesalahan saat mengambil data gambar');
+    }
+}
+
+const deleteImage = async(req, res) => {
+const {id} = req.params
+const {userId} = req.username
+try {
+   const image = await Image.findOneAndDelete({ _id: id, user: userId });
+
+  if (image) {
+    res.json({
+      status: 'success',
+      statusCode: res.statusCode,
+      message: "Delete Successfully"
+    });
+  } else {
+    res.status(404).json({
+      status: 'error',
+      message: 'Image not found'
+    });
+  }
+} catch (error) {
+  console.error(error);
+  res.status(500).send('Terjadi kesalahan saat menghapus gambar');
+}
+
+}
+
 
 
 // const uploadImage = async (req, res) => {
@@ -66,89 +153,89 @@ const uploadImage = async (req, res) => {
 //       }
 // }
 
-const getImage = async (req, res) => {
-    try {
-        // Ambil data gambar dari MongoDB berdasarkan ID
+// const getImage = async (req, res) => {
+//     try {
+//         // Ambil data gambar dari MongoDB berdasarkan ID
        
-        const image = await Image.findById(req.params.id).populate('user', 'username email');
+//         const image = await Image.findById(req.params.id).populate('user', 'username email');
     
-        if (image) {
-            res.status(200).json({
-              success: true,
-              statusCode: res.statusCode,
-              waktu:image.waktu,
-              label: image.label,
-              treatment: image.treatment,
-              image: image.image.toString('base64'),
-              user: image.user
-            });
-          } else {
-            res.status(404).json({ 
-              success: false, 
-              message: 'Gambar tidak ditemukan' 
-            });
-          }
-      } catch (error) {
-        console.error(error);
-        res.status(500).send('Terjadi kesalahan saat mengambil gambar');
-      }
-}
+//         if (image) {
+//             res.status(200).json({
+//               success: true,
+//               statusCode: res.statusCode,
+//               waktu:image.waktu,
+//               label: image.label,
+//               treatment: image.treatment,
+//               image: image.image.toString('base64'),
+//               user: image.user
+//             });
+//           } else {
+//             res.status(404).json({ 
+//               success: false, 
+//               message: 'Gambar tidak ditemukan' 
+//             });
+//           }
+//       } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Terjadi kesalahan saat mengambil gambar');
+//       }
+// }
 
-const getAllImages = async (req, res) => {
-    try {
-        // Ambil semua data gambar dari MongoDB
-        const userId = req.username.userId;
-        const images = await Image.find({ user: userId }).populate('user', 'username email');
+// const getAllImages = async (req, res) => {
+//     try {
+//         // Ambil semua data gambar dari MongoDB
+//         const userId = req.username.userId;
+//         const images = await Image.find({ user: userId }).populate('user', 'username email');
         
-        if (images.length > 0) {
-            res.status(200).json({
-              success: true,
-              statusCode: res.statusCode,
-              data: images.map(image => ({
-                waktu: image.waktu,
-                id: image._id,
-                label: image.label,
-                treatment: image.treatment,
-                image: image.image.toString('base64'),
-                user: image.user
-              }))
-            });
-          } else {
-            res.status(404).json({ 
-              success: false, 
-              message: 'Data gambar tidak ditemukan' 
-            });
-          }
-      } catch (error) {
-        console.error(error);
-        res.status(500).send('Terjadi kesalahan saat mengambil data gambar');
-      }
-}
+//         if (images.length > 0) {
+//             res.status(200).json({
+//               success: true,
+//               statusCode: res.statusCode,
+//               data: images.map(image => ({
+//                 waktu: image.waktu,
+//                 id: image._id,
+//                 label: image.label,
+//                 treatment: image.treatment,
+//                 image: image.image.toString('base64'),
+//                 user: image.user
+//               }))
+//             });
+//           } else {
+//             res.status(404).json({ 
+//               success: false, 
+//               message: 'Data gambar tidak ditemukan' 
+//             });
+//           }
+//       } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Terjadi kesalahan saat mengambil data gambar');
+//       }
+// }
 
-const deleteImage = async(req, res) => {
-  const {id} = req.params
-  const userId = req.username.userId
-  try {
-     const image = await Image.findOneAndDelete({ _id: id, user: userId });
+// const deleteImage = async(req, res) => {
+//   const {id} = req.params
+//   const userId = req.username.userId
+//   try {
+//      const image = await Image.findOneAndDelete({ _id: id, user: userId });
 
-    if (image) {
-      res.json({
-        status: 'success',
-        statusCode: res.statusCode,
-        message: "Delete Successfully"
-      });
-    } else {
-      res.status(404).json({
-        status: 'error',
-        message: 'Image not found'
-      });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Terjadi kesalahan saat menghapus gambar');
-  }
+//     if (image) {
+//       res.json({
+//         status: 'success',
+//         statusCode: res.statusCode,
+//         message: "Delete Successfully"
+//       });
+//     } else {
+//       res.status(404).json({
+//         status: 'error',
+//         message: 'Image not found'
+//       });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Terjadi kesalahan saat menghapus gambar');
+//   }
   
-}
+// }
 
 
 module.exports = {uploadImage, getImage, getAllImages, deleteImage};
