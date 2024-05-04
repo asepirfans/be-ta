@@ -18,10 +18,10 @@ const storage = multer.diskStorage({
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 
-router.post('/upload',upload.single('image'),verifyToken,imageController.uploadImage);
-router.get('/image/:id',verifyToken,imageController.getImage);
-router.get('/images',verifyToken, imageController.getAllImages);
-router.delete('/image/:id',verifyToken, imageController.deleteImage);
+router.post('/upload',upload.single('image'),verifyToken,imageController.uploadDetect);
+router.get('/detect/:id',verifyToken,imageController.getDetect);
+router.get('/detects',verifyToken, imageController.getAllDetects);
+router.delete('/detect/:id',verifyToken, imageController.deleteDetect);
 
 
 module.exports = router;

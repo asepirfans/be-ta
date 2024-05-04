@@ -2,7 +2,7 @@ const Image = require('../models/imageModel');
 const cloudinary = require('../utils/cloudinary')
 const fs = require('fs');
 
-const uploadImage = async (req, res) => {
+const uploadDetect = async (req, res) => {
   const {label, treatment} = req.body;
   const {userId} = req.username;
  try {
@@ -30,7 +30,7 @@ const uploadImage = async (req, res) => {
 }
 }
 
-const getImage = async (req, res) => {
+const getDetect = async (req, res) => {
   const {id} = req.params
   const {userId} = req.username
   try {   
@@ -61,7 +61,7 @@ const getImage = async (req, res) => {
     }
 }
 
-const getAllImages = async (req, res) => {
+const getAllDetects = async (req, res) => {
   try {
       // Ambil semua data gambar dari MongoDB
       const userId = req.username.userId;
@@ -92,7 +92,7 @@ const getAllImages = async (req, res) => {
     }
 }
 
-const deleteImage = async(req, res) => {
+const deleteDetect = async(req, res) => {
 const {id} = req.params
 const {userId} = req.username
 try {
@@ -238,7 +238,7 @@ try {
 // }
 
 
-module.exports = {uploadImage, getImage, getAllImages, deleteImage};
+module.exports = {uploadDetect, getDetect, getAllDetects, deleteDetect};
 
   // try {
     //       // Baca gambar yang diupload

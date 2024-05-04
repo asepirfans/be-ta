@@ -2,8 +2,8 @@ const PumpData = require('../models/pumpModel');
 
 const postPump = async (req, res) => {
   try {
-    const { pump1, pump2, pump3 } = req.body;
-    const pumpData =  await PumpData.create({ pump1, pump2, pump3 });
+    const { pump1, pump2, pump3, autoManual } = req.body;
+    const pumpData =  await PumpData.create({ pump1, pump2, pump3, autoManual });
 
     res.status(201).json({
       success: true,
@@ -27,12 +27,12 @@ const getPump = async (req, res) => {
       if (!dataPump) {
         return res.status(404).json({ message: 'Data tidak ditemukan' });
       }
-      const { pump1, pump2, pump3 } = dataPump[0];
+      const { pump1, pump2, pump3, autoManual } = dataPump[0];
       res.status(200).json(
         {
           success: true,
           statusCode: res.statusCode,
-          data: { pump1, pump2, pump3 }
+          data: { pump1, pump2, pump3, autoManual }
         }
         );
     } catch (error) {

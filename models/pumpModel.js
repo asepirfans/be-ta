@@ -10,6 +10,9 @@ const pumpSchema = new mongoose.Schema({
   pump3: {
     type: String, 
   },
+  autoManual: {
+    type: String, 
+  },
   waktu: {
     type: Date,
     default: Date.now,
