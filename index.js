@@ -42,7 +42,7 @@ dataChangeStream.on('change', (change) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
             statusPlant = false;
-        }, 10000); // I
+        }, 20000); 
     }
 }
 );
