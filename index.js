@@ -18,6 +18,10 @@ connectDB();
 app.use('/api', sensorRoutes);
 app.use('/user', userRoutes);
 
+app.get('/', (req,res) => {
+    res.send("API Ready")
+})
+
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   console.log(`Server berjalan di port ${port}`);
@@ -42,7 +46,7 @@ dataChangeStream.on('change', (change) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
             statusPlant = false;
-        }, 20000); 
+        }, 10000); 
     }
 }
 );
