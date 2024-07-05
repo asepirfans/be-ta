@@ -33,6 +33,24 @@ const createSensor = async (req, res) => {
   }
 };
 
+const getAllSensors = async (req, res) => {
+  try {
+    const dataSensor = (await SensorData.find().sort({waktu:-1})).reverse();
+    if (!dataSensor) {
+      return res.status(404).json({ message: 'Data tidak ditemukan' });
+    }
+    res.status(200).json(
+      {
+        success: true,
+        statusCode: res.statusCode,
+        data: dataSensor,
+      }
+      );
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 const getSensors = async (req, res) => {
   try {
     const dataSensor = (await SensorData.find().sort({waktu:-1}).limit(5)).reverse();
@@ -51,6 +69,52 @@ const getSensors = async (req, res) => {
   }
 }
 
+const getSensorByKet = async (req, res) => {
+  try {
+    const dataSensor = await SensorData.aggregate([
+      {
+        $match: {
+          $or: [
+            { "plant1.keterangan": "Pompa Nyala" },
+            { "plant2.keterangan": "Pompa Nyala" },
+            { "plant3.keterangan": "Pompa Nyala" }
+          ]
+        }
+      },
+      { $limit: 5 },
+      {
+        $project: {
+          _id: 0,
+          plant1: "$plant1.keterangan",
+          plant2: "$plant2.keterangan",
+          plant3: "$plant3.keterangan",
+          waktu: 1
+        }
+      }
+    ]).exec();
+
+    if (!dataSensor || dataSensor.length === 0) {
+      return res.status(404).json({ message: 'Data tidak ditemukan' });
+    }
+
+    // Format the response data
+    const formattedData = dataSensor.map(item => ({
+      plant1: item.plant1 || "Pompa Nyala",
+      plant2: item.plant2 || "Pompa Nyala",
+      plant3: item.plant3 || "Pompa Nyala",
+      waktu: item.waktu
+    }));
+
+    res.status(200).json({
+      success: true,
+      statusCode: res.statusCode,
+      data: formattedData,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const getSensor = async (req, res) => {
   try {
     const dataSensor = await SensorData.find().sort({waktu:-1}).limit(1);
@@ -65,88 +129,9 @@ const getSensor = async (req, res) => {
       }
       );
   } catch (error) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: error.message });
   }
 }
-
-// const getHighestSensor = async (req, res) => {
-//   try {
-//     const dataSensor = await SensorData.find().sort({ waktu: -1 }).lean();
-    
-//     if (!dataSensor) {
-//       return res.status(404).json({ message: 'Data tidak ditemukan' });
-//     }
-
-//     // Ambil semua nilai suhu dari dataSensor
-//     const allTemperatures1 = dataSensor
-//       .flatMap(sensor => [sensor.plant1?.suhu, sensor.plant2?.suhu, sensor.plant3?.suhu])
-//       .filter(suhu => suhu !== undefined);
-
-//     // Cari suhu tertinggi
-//     const highestTemperature1 = Math.max(...allTemperatures1);
-
-//     const allTemperatures2 = dataSensor
-//       .flatMap(sensor => [sensor.plant2?.suhu])
-//       .filter(suhu => suhu !== undefined);
-
-//     // Cari suhu tertinggi
-//     const highestTemperature2 = Math.max(...allTemperatures2);
-
-//     const allTemperatures3 = dataSensor
-//       .flatMap(sensor => [sensor.plant3?.suhu])
-//       .filter(suhu => suhu !== undefined);
-
-//     // Cari suhu tertinggi
-//     const highestTemperature3 = Math.max(...allTemperatures3);
-
-//     const allSoil1 = dataSensor
-//     .flatMap(sensor => [sensor.plant1?.kelembapanTanah])
-//     .filter(kelembapanTanah => kelembapanTanah !== undefined);
-
-//   // Cari suhu tertinggi
-//     const highestSoil1 = Math.max(...allSoil1);
-
-//     const allSoil2 = dataSensor
-//     .flatMap(sensor => [sensor.plant2?.kelembapanTanah])
-//     .filter(kelembapanTanah => kelembapanTanah !== undefined);
-
-//   // Cari suhu tertinggi
-//     const highestSoil2 = Math.max(...allSoil2);
-
-//     const allSoil3 = dataSensor
-//     .flatMap(sensor => [sensor.plant3?.kelembapanTanah])
-//     .filter(kelembapanTanah => kelembapanTanah !== undefined);
-
-//   // Cari suhu tertinggi
-//     const highestSoil3 = Math.max(...allSoil3);
-
-//     res.status(200).json({
-//       success: true,
-//       statusCode: res.statusCode,
-//       data: 
-//         {
-//           plant1: {
-//             highestTemperature: highestTemperature1.toPrecision(2),
-//             highestSoil: highestSoil1.toPrecision(3),
-
-//           },
-//           plant2: {
-//             highestTemperature: highestTemperature2.toPrecision(2),
-//             highestSoil: highestSoil2.toPrecision(3),
-
-//           },
-//           plant3: {
-//             highestTemperature: highestTemperature3.toPrecision(2),
-//             highestSoil: highestSoil3.toPrecision(3),
-
-//           },
-//         }
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// }
 
 const getHighestSensor = async (req, res) => {
   try {
@@ -175,4 +160,4 @@ const getHighestSensor = async (req, res) => {
 
 
 
-module.exports = { createSensor, getSensors, getSensor, getHighestSensor };
+module.exports = { createSensor, getSensors, getSensor, getHighestSensor, getSensorByKet, getAllSensors };
