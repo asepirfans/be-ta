@@ -19,7 +19,7 @@ app.use('/api', sensorRoutes);
 app.use('/user', userRoutes);
 
 app.get('/', (req,res) => {
-    res.send("API Ready")
+    res.send("API Smart Tomato Ready")
 })
 
 const port = process.env.PORT || 3000;
