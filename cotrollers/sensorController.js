@@ -35,7 +35,7 @@ const createSensor = async (req, res) => {
 
 const getAllSensors = async (req, res) => {
   try {
-    const dataSensor = (await SensorData.find().sort({waktu:-1})).reverse();
+    const dataSensor = (await SensorData.find().sort({waktu:1})).reverse();
     if (!dataSensor) {
       return res.status(404).json({ message: 'Data tidak ditemukan' });
     }
