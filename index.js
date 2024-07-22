@@ -46,7 +46,7 @@ dataChangeStream.on('change', (change) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
             statusPlant = false;
-        }, 10000); 
+        }, 20000); 
     }
 }
 );
